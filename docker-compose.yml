@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  syncboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: syncboard-canvas
+    ports:
+      - "8007:8007"
+    environment:
+      - PORT=8007
+      - SYNCBOARD_DB=/app/backend/data/syncboard.db
+    volumes:
+      - canvas_data:/app/backend/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8007/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  canvas_data:
+    driver: local
